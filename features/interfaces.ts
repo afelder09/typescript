@@ -27,7 +27,7 @@ const drinks = {
   }
 };
 
-const printSummary = (itme: Reportable): void => {
+const printSummary = (item: Reportable): void => {
   console.log(item.summary());
 };
 
