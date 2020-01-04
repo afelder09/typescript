@@ -1,11 +1,11 @@
-import { User } from '../models/User'
 
-const user = new User({name: 'butler', age: 35})
+import { User } from '../models/User';
 
-console.log(user.get('name'))
+const collection = User.buildUserCollection();
 
-user.on('change', () => {
-    console.log('user was changed')
+collection.on('change', () => {
+    console.log('Change tiggered')
+    console.log(collection)
 })
 
-user.trigger('change')
+collection.fetch();

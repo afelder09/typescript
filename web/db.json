@@ -1,9 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
-      "name": "manwarski",
-      "age": 34
+      "id": 1
     },
     {
       "name": "jimmy",

@@ -1,6 +1,8 @@
-import { Eventing } from './Eventing'
-import { Sync } from './Sync'
+import { Model } from './Model'
 import { Attributes } from './Attributes'
+import { ApiSync } from './ApiSyn'
+import { Eventing } from './Eventing'
+import { Collection } from './Collection'
 
 export interface UserProps {
     name?: string,
@@ -8,36 +10,21 @@ export interface UserProps {
     id?: number
 }
 
-export class User {
-    public events: Eventing = new Eventing();
-    public sync: Sync<UserProps> = new Sync<UserProps>('http://localhost:1234/users')
-    public attributes: Attributes<UserProps>
+const rootUrl = 'http://localhost:3000/users'
 
-    constructor(data: UserProps) {
-        this.attributes = new Attributes<UserProps>(data)
+export class User extends Model<UserProps> {
+    static buildUser(attrs: UserProps): User {
+        return new User(
+            new Attributes<UserProps>(attrs),
+            new ApiSync<UserProps>(rootUrl),
+            new Eventing()
+        )
     }
 
-    get get(){
-        return this.attributes.get;
-    }
-
-    set(key, value) {
-        return this.attributes.set(key)
-    }
-
-    get on() {
-        return this.events.on
-    }
-
-    get trigger() {
-        return this.events.trigger
-    }
-
-    fetch() {
-
-    }
-
-    save() {
-
+    static buildUserCollection(): Collection<User, UserProps> {
+        return new Collection<User, UserProps>(
+            rootUrl,
+            (json: UserProps) => User.buildUser(json)
+        )
     }
 }
