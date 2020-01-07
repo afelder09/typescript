@@ -117,7 +117,89 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"models/Model.ts":[function(require,module,exports) {
+})({"src/views/UserForm.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var UserForm =
+/** @class */
+function () {
+  function UserForm(parent, model) {
+    var _this = this;
+
+    this.parent = parent;
+    this.model = model;
+
+    this.onSetAgeClick = function () {
+      _this.model.setRandomAge();
+    };
+
+    this.onSetNameClick = function () {
+      var input = _this.parent.querySelector('input');
+
+      var name = input.value;
+
+      _this.model.set({
+        name: name
+      });
+    };
+
+    this.bindModel();
+  }
+
+  UserForm.prototype.bindModel = function () {
+    var _this = this;
+
+    this.model.on('change', function () {
+      _this.render();
+    });
+  };
+
+  UserForm.prototype.eventsMap = function () {
+    return {
+      'click:.set-age': this.onSetAgeClick,
+      'click:.set-name': this.onSetNameClick
+    };
+  };
+
+  UserForm.prototype.template = function () {
+    return "\n            <div>\n                <h1>Form</h1>\n                <div>User name: " + this.model.get('name') + "</div>\n                <div>User age: " + this.model.get('age') + "</div>\n                <input />\n                <button class=\"set-name\">Change Name</button>\n                <button class='set-age'>Set Random Age</button>\n            </div>\n        ";
+  };
+
+  UserForm.prototype.bindEvents = function (fragment) {
+    var eventsMap = this.eventsMap();
+
+    var _loop_1 = function _loop_1(eventKey) {
+      var _a = eventKey.split(":"),
+          eventName = _a[0],
+          selector = _a[1];
+
+      fragment.querySelectorAll(selector).forEach(function (element) {
+        element.addEventListener(eventName, eventsMap[eventKey]);
+      });
+    };
+
+    for (var eventKey in eventsMap) {
+      _loop_1(eventKey);
+    }
+  };
+
+  UserForm.prototype.render = function () {
+    this.parent.innerHTML = '';
+    var templateElement = document.createElement('template');
+    templateElement.innerHTML = this.template();
+    this.bindEvents(templateElement.content);
+    this.parent.append(templateElement.content);
+  };
+
+  return UserForm;
+}();
+
+exports.UserForm = UserForm;
+},{}],"src/models/Model.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -170,7 +252,7 @@ function () {
 }();
 
 exports.Model = Model;
-},{}],"models/Attributes.ts":[function(require,module,exports) {
+},{}],"src/models/Attributes.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1915,7 +1997,7 @@ module.exports.default = axios;
 
 },{"./utils":"node_modules/axios/lib/utils.js","./helpers/bind":"node_modules/axios/lib/helpers/bind.js","./core/Axios":"node_modules/axios/lib/core/Axios.js","./core/mergeConfig":"node_modules/axios/lib/core/mergeConfig.js","./defaults":"node_modules/axios/lib/defaults.js","./cancel/Cancel":"node_modules/axios/lib/cancel/Cancel.js","./cancel/CancelToken":"node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"node_modules/axios/lib/cancel/isCancel.js","./helpers/spread":"node_modules/axios/lib/helpers/spread.js"}],"node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"node_modules/axios/lib/axios.js"}],"models/ApiSyn.ts":[function(require,module,exports) {
+},{"./lib/axios":"node_modules/axios/lib/axios.js"}],"src/models/ApiSyn.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -1955,7 +2037,7 @@ function () {
 }();
 
 exports.ApiSync = ApiSync;
-},{"axios":"node_modules/axios/index.js"}],"models/Eventing.ts":[function(require,module,exports) {
+},{"axios":"node_modules/axios/index.js"}],"src/models/Eventing.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1993,7 +2075,7 @@ function () {
 }();
 
 exports.Eventing = Eventing;
-},{}],"models/Collection.ts":[function(require,module,exports) {
+},{}],"src/models/Collection.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -2050,7 +2132,7 @@ function () {
 }();
 
 exports.Collection = Collection;
-},{"axios":"node_modules/axios/index.js","./Eventing":"models/Eventing.ts"}],"models/User.ts":[function(require,module,exports) {
+},{"axios":"node_modules/axios/index.js","./Eventing":"src/models/Eventing.ts"}],"src/models/User.ts":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -2114,26 +2196,35 @@ function (_super) {
     });
   };
 
+  User.prototype.setRandomAge = function () {
+    var age = Math.round(Math.random() * 100);
+    this.set({
+      age: age
+    });
+  };
+
   return User;
 }(Model_1.Model);
 
 exports.User = User;
-},{"./Model":"models/Model.ts","./Attributes":"models/Attributes.ts","./ApiSyn":"models/ApiSyn.ts","./Eventing":"models/Eventing.ts","./Collection":"models/Collection.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"./Model":"src/models/Model.ts","./Attributes":"src/models/Attributes.ts","./ApiSyn":"src/models/ApiSyn.ts","./Eventing":"src/models/Eventing.ts","./Collection":"src/models/Collection.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var User_1 = require("../models/User");
+var UserForm_1 = require("./views/UserForm");
 
-var collection = User_1.User.buildUserCollection();
-collection.on('change', function () {
-  console.log('Change tiggered');
-  console.log(collection);
+var User_1 = require("./models/User");
+
+var user = User_1.User.buildUser({
+  name: 'NAME',
+  age: 20
 });
-collection.fetch();
-},{"../models/User":"models/User.ts"}],"../../../../.nvm/versions/node/v10.0.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var userForm = new UserForm_1.UserForm(document.getElementById('root'), user);
+userForm.render();
+},{"./views/UserForm":"src/views/UserForm.ts","./models/User":"src/models/User.ts"}],"../../../../.nvm/versions/node/v10.0.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2161,7 +2252,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54233" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49686" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
